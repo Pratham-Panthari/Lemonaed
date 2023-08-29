@@ -55,12 +55,19 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({}).populate('category').limit(12).sort({ createdAt: -1 })
+       const page = req.query.page;
+        const limit = req.query.limit
+        const products = await Product.find({}).populate('category').sort({ createdAt: -1 })
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        const productResults = products.slice(startIndex, endIndex)
+
         res.status(200).send({
             status: 'success',
             totalCount: products.length,
             message: 'All products fetched',
-            products,   
+            productResults,   
         })
     } catch (error) {
         console.log(error)
