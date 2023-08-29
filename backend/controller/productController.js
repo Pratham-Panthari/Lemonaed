@@ -55,11 +55,8 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-<<<<<<< HEAD
+
         const page = req.query.page;
-=======
-       const page = req.query.page;
->>>>>>> 2321e3c3241769140a13bc329a1ba54008a8b51f
         const limit = req.query.limit
         const products = await Product.find({}).populate('category').sort({ createdAt: -1 })
         const startIndex = (page - 1) * limit;
@@ -260,8 +257,5 @@ const brainTreePayment = async(req, res) => {
     }
 }
 
-<<<<<<< HEAD
 module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory, brainTreeToken ,brainTreePayment}
-=======
-module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, brainTreeToken ,brainTreePayment}
->>>>>>> 2321e3c3241769140a13bc329a1ba54008a8b51f
+
