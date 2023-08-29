@@ -218,8 +218,8 @@ const placeOrder = async (req, res) => {
         const session = await stripe.checkout.sessions.create({
             line_items,
             mode: "payment",
-            success_url: 'http://localhost:5173/profile',
-            cancel_url: 'http://localhost:5173/cart'
+            success_url: 'https://lemonaed-client.onrender.com/profile',
+            cancel_url: 'https://lemonaed-client.onrender.com/cart'
         })
         if(session){
             await Order.create({
