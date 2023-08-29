@@ -1,7 +1,7 @@
 const express = require('express')
 const {loginRequire, isAdmin} = require('../middlewear/authMiddlewear')
 
-const {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct,
+const {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory,
    brainTreeToken, brainTreePayment } = require('../controller/productController')
 
 
@@ -21,6 +21,8 @@ router.delete('/delete-product/:pid',  deleteProduct)
 router.get('/search/:keyword', searchProductController)
 
 router.get('/similar-products/:pid/:cid', similarProduct)
+
+router.get('/similar-products/:cid', similarCategory)
 
 router.get('/braintree/token', brainTreeToken)
 

@@ -55,12 +55,23 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({}).populate('category').limit(12).sort({ createdAt: -1 })
+<<<<<<< HEAD
+        const page = req.query.page;
+=======
+       const page = req.query.page;
+>>>>>>> 2321e3c3241769140a13bc329a1ba54008a8b51f
+        const limit = req.query.limit
+        const products = await Product.find({}).populate('category').sort({ createdAt: -1 })
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        const productResults = products.slice(startIndex, endIndex)
+
         res.status(200).send({
             status: 'success',
             totalCount: products.length,
             message: 'All products fetched',
-            products,   
+            productResults,   
         })
     } catch (error) {
         console.log(error)
@@ -184,6 +195,20 @@ const similarProduct = async(req, res) => {
     }
 }
 
+const similarCategory = async (req, res) => {
+    try {
+        const cid = req.params.cid
+        const products = await Product.find({ category: cid }).populate("category")
+        res.status(200).send({
+            status: 'success',
+            message: 'similar products fetched successfully',
+            products
+        })
+    } catch (error) {
+        console.log(error)
+    }
+} 
+
 
 const brainTreeToken = async(req, res) => {
     try {
@@ -235,4 +260,8 @@ const brainTreePayment = async(req, res) => {
     }
 }
 
+<<<<<<< HEAD
+module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory, brainTreeToken ,brainTreePayment}
+=======
 module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, brainTreeToken ,brainTreePayment}
+>>>>>>> 2321e3c3241769140a13bc329a1ba54008a8b51f
