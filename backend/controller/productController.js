@@ -2,7 +2,7 @@ const slugify = require('slugify')
 const Product = require('../model/Product')
 const stripe = require('stripe')("sk_test_51NkVIASFyRl4oKCVmMwrEGDlsAABGXv0BzgdasKHzi5aeLqEl8SbOt55QaTXtFuzSIB5hbk9mChD8gO1sfuU8DAX00lcMMbnt0")
 const mongoose = require('mongoose')
-const { v4 : uuid } = require('uuid')
+
 const Order = require('../model/Order')
 
 
