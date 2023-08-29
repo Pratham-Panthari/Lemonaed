@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import AdminMenu from './adminMenu'
+import AdminMenu from './AdminMenu'
 import axios from 'axios'
 import { useAuth } from '../context/auth'
 
