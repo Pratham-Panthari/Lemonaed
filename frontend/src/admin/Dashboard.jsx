@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AdminMenu from './adminMenu'
+import AdminMenu from './AdminMenu'
 import { useAuth } from '../context/auth'
 
 const Dashboard = () => {
