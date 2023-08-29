@@ -1,8 +1,9 @@
 const express = require('express')
+
 const {loginRequire, isAdmin} = require('../middlewear/authMiddlewear')
 
 const {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory,
-   brainTreeToken, brainTreePayment } = require('../controller/productController')
+   placeOrder } = require('../controller/productController')
 
 
 const router = express.Router()
@@ -24,8 +25,6 @@ router.get('/similar-products/:pid/:cid', similarProduct)
 
 router.get('/similar-products/:cid', similarCategory)
 
-router.get('/braintree/token', brainTreeToken)
-
-router.post('/braintree/payment', loginRequire, brainTreePayment) 
+router.post('/create-checkout-session', loginRequire, placeOrder) 
 
 module.exports = router

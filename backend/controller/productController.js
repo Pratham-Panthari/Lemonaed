@@ -1,16 +1,10 @@
 const slugify = require('slugify')
 const Product = require('../model/Product')
-
+const stripe = require('stripe')("sk_test_51NkVIASFyRl4oKCVmMwrEGDlsAABGXv0BzgdasKHzi5aeLqEl8SbOt55QaTXtFuzSIB5hbk9mChD8gO1sfuU8DAX00lcMMbnt0")
 const mongoose = require('mongoose')
-const braintree = require('braintree')
+const { v4 : uuid } = require('uuid')
 const Order = require('../model/Order')
 
-const gateway = new braintree.BraintreeGateway({
-    environment: braintree.Environment.Sandbox,
-    merchantId: "hppcr7qxtstkpbkn",
-    publicKey: "tnsg7ch57zs9mznn",
-    privateKey: "0dd8f32690f82121bc95aba5198f2562",
-  });
 
 const createProduct = async (req, res) => {
     try {
@@ -55,7 +49,6 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-
         const page = req.query.page;
         const limit = req.query.limit
         const products = await Product.find({}).populate('category').sort({ createdAt: -1 })
@@ -206,56 +199,42 @@ const similarCategory = async (req, res) => {
     }
 } 
 
-
-const brainTreeToken = async(req, res) => {
+const placeOrder = async (req, res) => {
     try {
-        gateway.clientToken.generate({}, function(error, result) {
-            if(error){
-                res.send(error)
-            }
-            else{
-                res.send(result)
+        const cart = req.body.cart
+        const line_items = cart.map(c => {
+            return {
+                price_data: {
+                    currency: 'inr',
+                    product_data: {
+                        name: c.product.name,
+                        images: [c.product.photo[0]],
+                    },
+                    unit_amount: c.product.price * 100
+                },
+                quantity: c.quantity,
             }
         })
+        const session = await stripe.checkout.sessions.create({
+            line_items,
+            mode: "payment",
+            success_url: 'http://localhost:5173/profile',
+            cancel_url: 'http://localhost:5173/cart'
+        })
+        if(session){
+            await Order.create({
+                products: cart,
+                buyer: req.user._id
+            })
+            res.status(200).send({status: 'success', url: session.url})
+        } 
+       
     } catch (error) {
-        return res.status(500).send(error)
+        console.log(error)
+        res.status(500).send('Something went Wrong')
     }
 }
 
-const brainTreePayment = async(req, res) => {
-    try {
-        const { cart, nonce } = req.body
-        let totalPrice = 0
-        cart?.map((p) => {
-          totalPrice = parseInt(p.product.price) + parseInt(totalPrice)
-        })
-        totalPrice = parseInt(totalPrice) + parseInt(10)
-        let newTransaction = gateway.transaction.sale({
-            amount: totalPrice,
-            paymentMethodNonce: nonce,
-            options: {
-                submitForSettlement: true,
-            }
-        }, (error, result) => {
-            if(result){
-                const order = new Order({
-                    products: cart,
-                    payment: result,
-                    buyer: req.user._id,
-    
-                }).save()
-                
-                res.json({ok: true})
-            }
-            else{
-                res.send(error)
-            }
-            
-        })
-    } catch (error) {
-        res.status(500).send(error)
-    }
-}
+/* buyer: req.user._id, */
 
-module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory, brainTreeToken ,brainTreePayment}
-
+module.exports = {createProduct, getAllProducts, getProduct, updateProduct, deleteProduct, searchProductController, similarProduct, similarCategory, placeOrder}

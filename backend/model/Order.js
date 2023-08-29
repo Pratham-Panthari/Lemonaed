@@ -12,8 +12,6 @@ const orderSchema = new mongoose.Schema({
             quantity: String,
         },
     ],
-        
-    payment: {},
     buyer: {
         type: mongoose.ObjectId,
         ref:'user',
